@@ -39,9 +39,6 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -117,33 +114,36 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EFCore.BulkExtensions">
-      <Version>3.2.4</Version>
+      <Version>3.6.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite.Core">
-      <Version>3.1.9</Version>
+      <Version>3.1.20</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore">
-      <Version>3.1.9</Version>
+      <Version>3.1.20</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
-      <Version>3.1.9</Version>
+      <Version>3.1.20</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <Version>3.1.9</Version>
+      <Version>3.1.20</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.QualityTools.Testing.Fakes">
+      <Version>16.11.230815</Version>
+    </PackageReference>
     <PackageReference Include="PlayniteSDK">
-      <Version>5.4.0</Version>
+      <Version>6.0.0</Version>
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp">
-      <Version>1.0.1</Version>
+      <Version>1.0.4</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3">
-      <Version>2.0.4</Version>
+      <Version>2.0.6</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.core">
-      <Version>2.0.4</Version>
+      <Version>2.0.6</Version>
     </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
