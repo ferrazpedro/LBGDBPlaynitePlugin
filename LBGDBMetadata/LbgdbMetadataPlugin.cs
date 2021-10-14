@@ -143,42 +143,6 @@ namespace LBGDBMetadata
             return new LbgdbMetadataSettingsView(this);
         }
 
-
-        public override IEnumerable<ExtensionFunction> GetFunctions()
-        {
-            return base.GetFunctions();
-        }
-
-        public override void OnGameStarting(Game game)
-        {
-            base.OnGameStarting(game);
-        }
-
-        public override void OnGameStarted(Game game)
-        {
-            base.OnGameStarted(game);
-        }
-
-        public override void OnGameStopped(Game game, long ellapsedSeconds)
-        {
-            base.OnGameStopped(game, ellapsedSeconds);
-        }
-
-        public override void OnGameInstalled(Game game)
-        {
-            base.OnGameInstalled(game);
-        }
-
-        public override void OnGameUninstalled(Game game)
-        {
-            base.OnGameUninstalled(game);
-        }
-
-        public override void OnApplicationStarted()
-        {
-            base.OnApplicationStarted();
-        }
-
         public async Task<bool> NewMetadataAvailable()
         {
             var newMetadataHash = await _lbgdbApi.GetMetadataHash();

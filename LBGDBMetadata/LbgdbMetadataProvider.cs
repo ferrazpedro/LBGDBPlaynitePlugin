@@ -5,7 +5,6 @@ using System.Linq;
 using LBGDBMetadata.Extensions;
 using LBGDBMetadata.LaunchBox;
 using LBGDBMetadata.LaunchBox.Metadata;
-using Playnite.SDK.Metadata;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using SixLabors.ImageSharp;
@@ -83,15 +82,15 @@ namespace LBGDBMetadata
                 {
                     if (_options?.GameData != null && _regionPriority.Count < 1)
                     {
-                        if (_options.GameData.Region != null && !string.IsNullOrWhiteSpace(_options.GameData.Region.Name))
+                        if (_options.GameData.Regions != null && !string.IsNullOrWhiteSpace(_options.GameData.Region.Name))
                         {
-                            _regionPriority = _options.GameData.Region.Name.GetRegionPriorityList();
+                            _regionPriority = _options.GameData.Regions[0]?.Name.GetRegionPriorityList();
                         }
                         else
                         {
-                            if (!string.IsNullOrWhiteSpace(_options.GameData.GameImagePath))
+                            if (!string.IsNullOrWhiteSpace(_options.GameData.Roms[0]?.Path))
                             {
-                                var noIntoRegion = _options.GameData.GameImagePath.GetRegionNoIntro();
+                                var noIntoRegion = _options.GameData.Roms[0]?.Path.GetRegionNoIntro();
                                 if (!string.IsNullOrWhiteSpace(noIntoRegion))
                                 {
                                     _regionPriority = noIntoRegion.GetRegionPriorityList();
@@ -101,9 +100,9 @@ namespace LBGDBMetadata
                     }
 
                     var platformSearchName = "";
-                    if (!string.IsNullOrWhiteSpace(_options?.GameData?.Platform?.Name))
+                    if (!string.IsNullOrWhiteSpace(_options?.GameData?.Platforms[0]?.Name))
                     {
-                        var sanitizedPlatform = _options.GameData.Platform.Name.Sanitize();
+                        var sanitizedPlatform = _options.GameData.Platforms[0].Name.Sanitize();
                         platformSearchName = _plugin.PlatformTranslationTable.ContainsKey(sanitizedPlatform)
                             ? _plugin.PlatformTranslationTable[sanitizedPlatform]
                             : sanitizedPlatform;
@@ -188,7 +187,7 @@ namespace LBGDBMetadata
             return _game;
         }
 
-        public override string GetName()
+        public override string GetName(GetMetadataFieldArgs args)
         {
             var game = GetGame();
             
@@ -200,10 +199,10 @@ namespace LBGDBMetadata
                 }
             }
             
-            return base.GetName();
+            return base.GetName(args);
         }
 
-        public override List<string> GetGenres()
+        public override IEnumerable<MetadataProperty> GetGenres(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -215,22 +214,22 @@ namespace LBGDBMetadata
                 }
             }
 
-            return base.GetGenres();
+            return base.GetGenres(args);
         }
 
-        public override DateTime? GetReleaseDate()
+        public override ReleaseDate? GetReleaseDate(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
             if (game?.ReleaseDate != null)
             {
-                return game.ReleaseDate;
+                return new ReleaseDate(game.ReleaseDate.Value);
             }
 
-            return base.GetReleaseDate();
+            return base.GetReleaseDate(args);
         }
 
-        public override List<string> GetDevelopers()
+        public override IEnumerable<MetadataProperty> GetDevelopers(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -242,10 +241,10 @@ namespace LBGDBMetadata
                 }
             }
 
-            return base.GetDevelopers();
+            return base.GetDevelopers(args);
         }
 
-        public override List<string> GetPublishers()
+        public override IEnumerable<MetadataProperty> GetPublishers(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -257,11 +256,11 @@ namespace LBGDBMetadata
                 }
             }
 
-            return base.GetPublishers();
+            return base.GetPublishers(args);
         }
 
 
-        public override string GetDescription()
+        public override string GetDescription(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -273,10 +272,10 @@ namespace LBGDBMetadata
                 }
             }
 
-            return base.GetDescription();
+            return base.GetDescription(args);
         }
 
-        public override int? GetCommunityScore()
+        public override int? GetCommunityScore(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -288,10 +287,10 @@ namespace LBGDBMetadata
                 }
             }
 
-            return base.GetCommunityScore();
+            return base.GetCommunityScore(args);
         }
 
-        public override MetadataFile GetCoverImage()
+        public override MetadataFile GetCoverImage(GetMetadataFieldArgs args)
         {
             var game = GetGame();
             
@@ -307,10 +306,10 @@ namespace LBGDBMetadata
                 }
             }
 
-            return base.GetCoverImage();
+            return base.GetCoverImage(args);
         }
 
-        public override MetadataFile GetBackgroundImage()
+        public override MetadataFile GetBackgroundImage(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -326,10 +325,10 @@ namespace LBGDBMetadata
                 }
             }       
 
-            return base.GetBackgroundImage();
+            return base.GetBackgroundImage(args);
         }
 
-        public override List<Link> GetLinks()
+        public override List<Link> GetLinks(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -353,12 +352,12 @@ namespace LBGDBMetadata
                 return links;
             }
 
-            return base.GetLinks();
+            return base.GetLinks(args);
         }
 
-        public override List<string> GetFeatures()
+        public override IEnumerable<MetadataProperty> GetFeatures(GetMetadataFieldArgs args)
         {
-            return base.GetFeatures();
+            return base.GetFeatures(args);
         }
 
         public override List<MetadataField> AvailableFields
@@ -369,7 +368,7 @@ namespace LBGDBMetadata
             }
         }
 
-        public override MetadataFile GetIcon()
+        public override MetadataFile GetIcon(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
@@ -408,17 +407,17 @@ namespace LBGDBMetadata
                 }
             }
 
-            return base.GetIcon();
+            return base.GetIcon(args);
         }
 
-        public override int? GetCriticScore()
+        public override int? GetCriticScore(GetMetadataFieldArgs args)
         {
-            return base.GetCriticScore();
+            return base.GetCriticScore(args);
         }
 
-        public override List<string> GetTags()
+        public override IEnumerable<MetadataProperty> GetTags(GetMetadataFieldArgs args)
         {
-            return base.GetTags();
+            return base.GetTags(args);
         }
     }
 }
