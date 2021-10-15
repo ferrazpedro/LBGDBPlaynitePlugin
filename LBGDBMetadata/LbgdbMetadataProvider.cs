@@ -20,14 +20,14 @@ namespace LBGDBMetadata
         private readonly LbgdbMetadataPlugin _plugin;
         private Game _game;
         private Dictionary<string, int> _regionPriority = new Dictionary<string, int>();
-        
+
         public LbgdbMetadataProvider(MetadataRequestOptions options, LbgdbMetadataPlugin plugin)
         {
             _options = options;
             _plugin = plugin;
         }
 
-        private int GetWeightedRating(double communityRatingCount, double communityRating )
+        private int GetWeightedRating(double communityRatingCount, double communityRating)
         {
             double positiveVotes = Math.Floor((communityRating / 100) * communityRatingCount);
             double negativeVotes = communityRatingCount - positiveVotes;
@@ -35,7 +35,7 @@ namespace LBGDBMetadata
             double totalVotes = positiveVotes + negativeVotes;
             double average = totalVotes < 1 ? 0 : positiveVotes / totalVotes;
             double score = average - (average - 0.5) * Math.Pow(2, -Math.Log10(totalVotes + 1));
-            
+
             return (int)(score * 100);
         }
 
@@ -82,7 +82,7 @@ namespace LBGDBMetadata
                 {
                     if (_options?.GameData != null && _regionPriority.Count < 1)
                     {
-                        if (_options.GameData.Regions != null && !string.IsNullOrWhiteSpace(_options.GameData.Region.Name))
+                        if (_options.GameData.Regions != null && !string.IsNullOrWhiteSpace(_options.GameData.Regions[0].Name))
                         {
                             _regionPriority = _options.GameData.Regions[0]?.Name.GetRegionPriorityList();
                         }
@@ -100,14 +100,14 @@ namespace LBGDBMetadata
                     }
 
                     var platformSearchName = "";
-                    if (!string.IsNullOrWhiteSpace(_options?.GameData?.Platforms[0]?.Name))
+                    if (!string.IsNullOrWhiteSpace(_options?.GameData?.Platforms[0]?.SpecificationId))
                     {
-                        var sanitizedPlatform = _options.GameData.Platforms[0].Name.Sanitize();
+                        var sanitizedPlatform = _options.GameData.Platforms[0].SpecificationId;
                         platformSearchName = _plugin.PlatformTranslationTable.ContainsKey(sanitizedPlatform)
                             ? _plugin.PlatformTranslationTable[sanitizedPlatform]
                             : sanitizedPlatform;
                     }
-                    
+
                     using (var context = new MetaDataContext(_plugin.GetPluginUserDataPath()))
                     {
                         /* Can't tell which region the actual game name is from in the game object...
@@ -183,14 +183,14 @@ namespace LBGDBMetadata
                     }
                 }
             }
-            
+
             return _game;
         }
 
         public override string GetName(GetMetadataFieldArgs args)
         {
             var game = GetGame();
-            
+
             if (game != null)
             {
                 if (!string.IsNullOrWhiteSpace(game.Name))
@@ -198,7 +198,7 @@ namespace LBGDBMetadata
                     return game.Name;
                 }
             }
-            
+
             return base.GetName(args);
         }
 
@@ -210,7 +210,9 @@ namespace LBGDBMetadata
             {
                 if (!string.IsNullOrWhiteSpace(game.Genres))
                 {
-                    return game.Genres.Split(';').Select(genre => genre.Trim()).OrderBy(genre => genre.Trim()).ToList();
+                    return game.Genres.Split(';').Select(genre => genre.Trim())
+                        .OrderBy(genre => genre.Trim()).ToList()
+                        .Select(a => new MetadataNameProperty(a)).ToList(); ;
                 }
             }
 
@@ -237,7 +239,9 @@ namespace LBGDBMetadata
             {
                 if (!string.IsNullOrWhiteSpace(game.Developer))
                 {
-                    return game.Developer.Split(';').Select(developer => developer.Trim()).OrderBy(developer => developer.Trim()).ToList();
+                    return game.Developer.Split(';').Select(developer => developer.Trim())
+                        .OrderBy(developer => developer.Trim()).ToList()
+                        .Select(a => new MetadataNameProperty(a)).ToList(); ;
                 }
             }
 
@@ -252,7 +256,9 @@ namespace LBGDBMetadata
             {
                 if (!string.IsNullOrWhiteSpace(game.Publisher))
                 {
-                    return game.Publisher.Split(';').Select(publisher => publisher.Trim()).OrderBy(publisher => publisher.Trim()).ToList();
+                    return game.Publisher.Split(';').Select(publisher => publisher.Trim())
+                        .OrderBy(publisher => publisher.Trim()).ToList()
+                        .Select(a => new MetadataNameProperty(a)).ToList(); ;
                 }
             }
 
@@ -293,7 +299,7 @@ namespace LBGDBMetadata
         public override MetadataFile GetCoverImage(GetMetadataFieldArgs args)
         {
             var game = GetGame();
-            
+
             if (game != null)
             {
                 using (var context = new MetaDataContext(_plugin.GetPluginUserDataPath()))
@@ -323,12 +329,12 @@ namespace LBGDBMetadata
                         return new MetadataFile("https://images.launchbox-app.com/" + backgroundImage.FileName);
                     }
                 }
-            }       
+            }
 
             return base.GetBackgroundImage(args);
         }
 
-        public override List<Link> GetLinks(GetMetadataFieldArgs args)
+        public override IEnumerable<Link> GetLinks(GetMetadataFieldArgs args)
         {
             var game = GetGame();
 
